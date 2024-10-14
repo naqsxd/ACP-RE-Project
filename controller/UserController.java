@@ -19,6 +19,8 @@ public class UserController {
         users.add(newUser);
         System.out.println("Registration successful! Welcome, " + newUser.getName() + "!");
 
+
+
     }
 
 
@@ -32,5 +34,7 @@ public class UserController {
         System.out.println("Login failed. Invalid Credentials");
         return false;
     }
+    
+
     
 }

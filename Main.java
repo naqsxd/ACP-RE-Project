@@ -10,7 +10,7 @@ public class Main {
         UserController userController = new UserController(); // Create an instance of UserController
         boolean running = true;
 
-        System.out.println("Welcome to the Real Estate System");
+        System.out.println("--- Welcome to the Real Estate System ---");
         System.out.println("1. Register");
         System.out.println("2. Login");
 
@@ -33,6 +33,7 @@ public class Main {
                 String password = scanner.next();
 
                 userController.registerUser(name, username, email, password);
+                showMenu();
                 running = false;
 
             }else if (choice==2) {
@@ -51,5 +52,40 @@ public class Main {
 
         }
         scanner.close();
-    }   
+    }  
+    
+    public static void showMenu(){
+        boolean inMenu = true;
+        Scanner scanner = new Scanner(System.in);
+        PostController postController = new PostController();
+        
+
+        while (inMenu) {
+            ClientView.showMenu();
+            System.out.println("Choose an option: ");
+            int menuChoice = scanner.nextInt();
+            
+            switch (menuChoice) {
+                case 1:
+                    postController.createPost();
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 0:
+                    System.out.println("Logging out...");
+                    inMenu = false; // Exit the menu
+                    break;
+                default:
+                    System.out.println("Feature not implemented yet.");
+                    break;
+            }
+        }
+        scanner.close();
+    }
 }
