@@ -1,2 +1,2 @@
-1,1,Muhammed Mustafa,123 ABC XYZ,12345678,Muhamedmjw,muhamed@gmail.com,mmjw2910
-2,1,a,a,a,a,a,a
+1,1,Client,Address,12345678,client,client@gmail.com,client
+1,2,Admin,Address,98765432,admin,admin@gmail.com,admin

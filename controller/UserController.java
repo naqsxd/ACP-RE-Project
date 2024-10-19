@@ -53,13 +53,29 @@ public class UserController {
 
         for (User user : users) {
             if (user.getUsername().equalsIgnoreCase(username) && user.getPassword().equals(password)) {
-                return true; // Successful login
+                return true; 
             }
         }
 
-        return false; // Failed login
+        return false; 
     }
     
+    public boolean loginAdmin(Scanner scanner) {
+        System.out.println("Enter your username: ");
+        String username = scanner.next();
+
+        System.out.println("Enter your password: ");
+        String password = scanner.next();
+
+        for (User user : users) {
+            if (user.getUsername().equalsIgnoreCase(username) && user.getPassword().equals(password) && user.getRoleId() == 2) {
+                return true;  
+            }
+        }
+
+        return false; 
+    }
+
     public boolean isRegistered(String username){
         for(User user: users){
             if (user.getUsername().equals(username)) {
