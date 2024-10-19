@@ -1,3 +1,9 @@
+// THINGS TO PUT TO CONSIDERATION:
+// 1. Add validations to user input using regex.
+// 2. Give more feedback to user, if an error occurs.
+// 
+
+
 package controller;
 import model.User;
 import java.util.ArrayList;
@@ -44,7 +50,7 @@ public class UserController {
         System.out.println("Registration successful! Welcome, " + newUser.getName() + "!");
     }
 
-    public boolean loginUser(Scanner scanner) {
+    public boolean loginClient(Scanner scanner) {
         System.out.println("Enter your username: ");
         String username = scanner.next();
 
@@ -52,7 +58,7 @@ public class UserController {
         String password = scanner.next();
 
         for (User user : users) {
-            if (user.getUsername().equalsIgnoreCase(username) && user.getPassword().equals(password)) {
+            if (user.getUsername().equalsIgnoreCase(username) && user.getPassword().equals(password) && user.getRoleId()==1) {
                 return true; 
             }
         }
@@ -79,7 +85,6 @@ public class UserController {
     public boolean isRegistered(String username){
         for(User user: users){
             if (user.getUsername().equals(username)) {
-
                 return true;
             }
         }
@@ -103,11 +108,11 @@ public class UserController {
         if (!file.exists()) return;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(userDataFile))){
-            
             String line;
             while ((line=reader.readLine()) != null) {
                 String[] data = line.split(",");
                 if (data.length == 8) {
+
                     int userId = Integer.parseInt(data[0]);
                     int roleId = Integer.parseInt(data[1]);
                     String name = data[2];
@@ -116,6 +121,7 @@ public class UserController {
                     String username = data[5];
                     String email = data[6];
                     String password = data[7];
+                    
                     User user = new User(userId, roleId, name, address, phoneNumber, username, email, password);
                     users.add(user); // Add the user to the list
                 }
