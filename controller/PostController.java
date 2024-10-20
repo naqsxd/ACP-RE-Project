@@ -1,8 +1,8 @@
 package controller;
 import java.util.*;
 import java.io.*;
-import model.Post;
-import view.ClientView;
+import model.*;
+import view.*;
 
 public class PostController {
 

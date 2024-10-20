@@ -4,40 +4,44 @@ import controller.*;
 
 public class Main {
     public static void main(String[] args) {
+        System.out.println("Welcome to Real Estate Application!");
+
         Scanner scanner = new Scanner(System.in);
         UserController userController = new UserController();
         PostController postController = new PostController();
+        AdminController adminController = new AdminController();
 
         int isLoggedIn = -1;
     
-        System.out.println("Welcome to Real Estate Application");
-    
         while (isLoggedIn==-1) {
-            System.out.println("Please enter a number to proceed:\n- Register (1)\n- Login (2)\n- Exit (0)");
-            int choice = getValidInput(scanner, new int[]{0, 1, 2});
+            System.out.println("Enter a number:");
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit the Application");
+            int choice = getValidInput(scanner, new int[]{1, 2, 3});
             
             switch (choice) {
-
                 case 1:
                     userController.registerUser(scanner);
                     break;
 
-                case 2:
+                    case 2:
                     int userId = handleLogin(scanner, userController);
-                    if (userId >= 1) {
-                        isLoggedIn = userId;
-                        postController.handleClient(userId);
-                        break;
-                    } 
-                    // else if (isLoggedIn == 2) {
-                    //     // AdminView.showAdminMenu();
-                    //     // break;
-                    // }
-                    
-                    isLoggedIn = -1;
+                
+                    if (userId > 0) {  
+                        System.out.println("Logged in as a client successfully.");
+                        postController.handleClient(userId); 
+
+                    } else if (userId == -2) {
+                        System.out.println("Logged in as an admin successfully.");
+                        adminController.handleAdmin(userId); 
+                          
+                    } else {
+                        System.out.println("Login failed. Try again.");
+                    }
                     break;
 
-                case 0:
+                case 3:
                     System.out.println("Exiting application. Thank you!");
                     scanner.close();
                     return;  // Exit the application
@@ -45,42 +49,34 @@ public class Main {
         }
     }  
     
-    public static int handleLogin(Scanner scanner, UserController userController){
-        
-        System.out.println("Login in as: \n- Client (1)\n- Admin (2)\n- Go back (0)");
-        int loginChoice = getValidInput(scanner, new int[]{1, 2, 0});
-        int userId = userController.loginClient(scanner);
-
-        switch (loginChoice) {
-            case 1:
-                if (userId >= 1) {
-                    System.out.println("Logged in as a client successfully.");
-                    return userId; 
-                } else {
-                    System.out.println("Login failed. Please try again.");
-                    return -1; 
-                }
-
-
-            case 2:
-                if (userController.loginAdmin(scanner)) {
-                    System.out.println("Logged in as an admin successfully.");
-                    return 2;
-                } else {
-                    System.out.println("Login failed. Please try again.");
-                    return -1;
-                }
-
-                
-            case 0:
-                System.out.println("You went back.");
-                return -1;
-
-            default:
-                return -1;
+    public static int handleLogin(Scanner scanner, UserController userController) {
+        System.out.println("Login as:");
+        System.out.println("1. Client");
+        System.out.println("2. Admin");
+        System.out.println("3. Go Back");
+    
+        int loginChoice = getValidInput(scanner, new int[]{1, 2, 3});
+    
+        if (loginChoice == 1) {
+            int userId = userController.loginClient(scanner);  // Client login
+            if (userId > 0) {
+                return userId;  // Return userId for the client
+            } else {
+                return -1;  // Client login failed
+            }
+        } else if (loginChoice == 2) {
+            boolean isAdmin = userController.loginAdmin(scanner);  // Admin login
+            if (isAdmin) {
+                return -2;  // Use -2 to indicate successful admin login
+            } else {
+                return -1;  // Admin login failed
+            }
+        } else {
+            System.out.println("Going back to main menu.");
+            return -1;  // If the user chooses to go back
         }
-
     }
+    
 
     private static int getValidInput(Scanner scanner, int[] validChoices) {
         while (true) {

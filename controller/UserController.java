@@ -20,7 +20,7 @@ public class UserController {
 
     public void registerUser(Scanner scanner) {
 
-        int userId = users.size() + 1;  // after loading the users, you can get the size which equals the id
+        int userId = users.size() + 1;
 
         System.out.println("Enter your name:");
         String name = scanner.nextLine();
