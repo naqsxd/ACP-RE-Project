@@ -1,9 +1,8 @@
 package controller;
 import java.util.*;
 import java.io.*;
-
 import model.Post;
-import controller.UserController;
+import view.ClientView;
 
 public class PostController {
 
@@ -12,13 +11,16 @@ public class PostController {
     private HashMap<Integer, Post> posts;
     private final String postDataFile = "data\\PostData.txt";
 
+    
     public PostController() {
         posts = new HashMap<>();
         loadPosts();
     }
 
+
     public void handleClient(int userId) {
         try{
+            ClientView.showClientMenu();
             System.out.println("Choose an option: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -118,18 +120,160 @@ public class PostController {
         }
     }
      
+
     public void viewPost() {
-        System.out.println("Not implemented");
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(postDataFile))) {
+            String line;
+            
+            while ((line = br.readLine()) != null) {
+                
+                String[] postDetails = line.split(",");
+
+                String postId = postDetails[0];
+                String title = postDetails[4];  
+                String country = postDetails[6];  
+                String city = postDetails[7];  
+                String address = postDetails[8];  
+                String price = postDetails[9];
+                String listingType = postDetails[2];
+
+                
+                System.out.println(String.format("%s. %s - %s, %s, %s - %s - %s", postId, title, address, city, country, price, listingType));
+                
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
     }
+
 
     public void updatePost() {
-        System.out.println("Not implemented");
+        viewPost();  // Display existing posts to the user
+    
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the ID of the post you want to update: ");
+        int postId = scanner.nextInt();
+        scanner.nextLine();  // Consume the newline character
+    
+        if (posts.containsKey(postId)) {
+            Post postToUpdate = posts.get(postId);  // Retrieve the post
+    
+            System.out.println("Updating post: " + postToUpdate.getTitle());
+            
+            boolean updating = true;
+            while (updating) {
+                System.out.println("Choose an option to update:");
+                System.out.println("1. Title");
+                System.out.println("2. Type");
+                System.out.println("3. Listing Type");
+                System.out.println("4. Description");
+                System.out.println("5. Price");
+                System.out.println("6. Area");
+                System.out.println("7. Bedrooms");
+                System.out.println("8. Bathrooms");
+                System.out.println("9. Contact Info");
+                System.out.println("10. Country");
+                System.out.println("11. City");
+                System.out.println("12. Address");
+                System.out.println("13. Status"); 
+                System.out.println("0. Done Updating"); 
+    
+                int updateOption = scanner.nextInt();
+                scanner.nextLine(); // Consume the newline character
+    
+                switch (updateOption) {
+                    case 1:
+                        System.out.print("Enter new title: ");
+                        postToUpdate.setTitle(scanner.nextLine());
+                        break;
+                    case 2:
+                        System.out.print("Enter new type: ");
+                        postToUpdate.setType(scanner.nextLine());
+                        break;
+                    case 3:
+                        System.out.print("Enter new listing type: ");
+                        postToUpdate.setListingType(scanner.nextLine());
+                        break;
+                    case 4:
+                        System.out.print("Enter new description: ");
+                        postToUpdate.setDescription(scanner.nextLine());
+                        break;
+                    case 5:
+                        System.out.print("Enter new price: ");
+                        postToUpdate.setPrice(scanner.nextDouble());
+                        scanner.nextLine(); // Consume the newline character
+                        break;
+                    case 6:
+                        System.out.print("Enter new area: ");
+                        postToUpdate.setArea(scanner.nextDouble());
+                        scanner.nextLine(); // Consume the newline character
+                        break;
+                    case 7:
+                        System.out.print("Enter new number of bedrooms: ");
+                        postToUpdate.setBedrooms(scanner.nextInt());
+                        scanner.nextLine(); // Consume the newline character
+                        break;
+                    case 8:
+                        System.out.print("Enter new number of bathrooms: ");
+                        postToUpdate.setBathrooms(scanner.nextInt());
+                        scanner.nextLine(); // Consume the newline character
+                        break;
+                    case 9:
+                        System.out.print("Enter new contact information: ");
+                        postToUpdate.setOwnerContactInfo(scanner.nextLine());
+                        break;
+                    case 10:
+                        System.out.print("Enter new country: ");
+                        postToUpdate.setCountry(scanner.nextLine());
+                        break;
+                    case 11:
+                        System.out.print("Enter new city: ");
+                        postToUpdate.setCity(scanner.nextLine());
+                        break;
+                    case 12:
+                        System.out.print("Enter new address: ");
+                        postToUpdate.setAddress(scanner.nextLine());
+                        break;
+                    case 13:
+                        System.out.print("Enter new status: ");
+                        postToUpdate.setStatus(scanner.nextLine());
+                        break;
+                    case 0:
+                        updating = false; // Exit the loop to finish updating
+                        break;
+                    default:
+                        System.out.println("Invalid option. No changes made.");
+                        break;
+                }
+            }
+    
+            posts.put(postId, postToUpdate); // Update the HashMap
+            savePost(); // Save changes to the file
+            System.out.println("Post updated successfully!");
+    
+        } else {
+            System.out.println("Post not found.");
+        }
     }
+    
+
 
     public void deletePost() {
-        System.out.println("Not implemented");
-    }
+        viewPost();
 
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the ID of the post you want to delete: ");
+        int postId = scanner.nextInt();
+
+        if (posts.containsKey(postId)) {
+            posts.remove(postId);
+            savePost();
+            System.out.println("Post deleted successfully!");
+        } else {
+            System.out.println("Post not found.");
+        }
+    }
 
 
     private void loadPosts() {
@@ -140,7 +284,7 @@ public class PostController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length == 11) {
+                if (data.length == 15) {
 
                     int postId = Integer.parseInt(data[0]);
                     int userId = Integer.parseInt(data[1]);
@@ -167,6 +311,7 @@ public class PostController {
             System.err.println("Error parsing post data: " + e.getMessage());
         }
     }
+
 
     private void savePost() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(postDataFile))) {

@@ -13,7 +13,7 @@ public class Main {
     
         System.out.println("Welcome to Real Estate Application");
     
-        while (isLoggedIn == -1) {
+        while (isLoggedIn==-1) {
             System.out.println("Please enter a number to proceed:\n- Register (1)\n- Login (2)\n- Exit (0)");
             int choice = getValidInput(scanner, new int[]{0, 1, 2});
             
@@ -27,7 +27,6 @@ public class Main {
                     int userId = handleLogin(scanner, userController);
                     if (userId >= 1) {
                         isLoggedIn = userId;
-                        ClientView.showClientMenu();
                         postController.handleClient(userId);
                         break;
                     } 
