@@ -19,43 +19,48 @@ public class PostController {
 
 
     public void handleClient(int userId) {
-        try{
-            ClientView.showClientMenu();
-            System.out.println("Choose an option: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (choice) {
-                case 1:
-                    createPost(userId);
-                    break;
-
-                case 2:
-                    viewPost();
-                    break;
-
-                case 3:
-                    updatePost();
-                    break;
-
-                case 4:
-                    deletePost();
-                    break;
-
-                case 5:
-                    userController.profilePage();
-                    break;
-            
-                default:
-                    System.out.println("Please enter a valid option");
-                    handleClient(userId);
+        boolean isClientActive = true;
+        while (isClientActive) {
+            try {
+                ClientView.showClientMenu();
+                System.out.println("Choose an option: ");
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+    
+                switch (choice) {
+                    case 1:
+                        createPost(userId);
+                        break;
+    
+                    case 2:
+                        viewPost();
+                        break;
+    
+                    case 3:
+                        updatePost();
+                        break;
+    
+                    case 4:
+                        deletePost();
+                        break;
+    
+                    case 5:
+                        userController.profilePage();
+                        break;
+    
+                    case 0:  // Exit client session
+                        System.out.println("Logging out.");
+                        isClientActive = false;
+                        break;
+                    
+                    default:
+                        System.out.println("Please enter a valid option");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid number");
+                scanner.nextLine();
             }
-        }catch(InputMismatchException e){
-            System.out.println("Please enter a valid number");
-            scanner.nextLine();
-            handleClient(userId); 
         }
-        
     }
     
 
