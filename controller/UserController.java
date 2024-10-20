@@ -1,24 +1,21 @@
 // THINGS TO PUT TO CONSIDERATION:
 // 1. Add validations to user input using regex.
 // 2. Give more feedback to user, if an error occurs.
-// 
-
 
 package controller;
 import model.User;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.io.*;
 
 public class UserController {
 
-    private List<User> users; // creates a list of users
-    private final String userDataFile = "data\\UserData.txt"; // data path
+    private HashMap<Integer, User> users; 
+    private final String userDataFile = "data\\UserData.txt";
 
     public UserController() {
-        users = new ArrayList<>(); // initializing a new ArrayList
-        loadUsers(); // adding saved users (data) to this new ArrayList
+        users = new HashMap<>();
+        loadUsers();
     }
 
     public void registerUser(Scanner scanner) {
@@ -44,26 +41,26 @@ public class UserController {
 
 
         User newUser = new User(userId, 1, name, address, phoneNo, username, email, password);
-        users.add(newUser);
+        users.put(userId, newUser);
         saveUsers();
 
         System.out.println("Registration successful! Welcome, " + newUser.getName() + "!");
     }
 
-    public boolean loginClient(Scanner scanner) {
+    public int loginClient(Scanner scanner) {
         System.out.println("Enter your username: ");
         String username = scanner.next();
 
         System.out.println("Enter your password: ");
         String password = scanner.next();
 
-        for (User user : users) {
+        for (User user : users.values()) {
             if (user.getUsername().equalsIgnoreCase(username) && user.getPassword().equals(password) && user.getRoleId()==1) {
-                return true; 
+                return user.getUserId(); 
             }
         }
 
-        return false; 
+        return -1; 
     }
     
     public boolean loginAdmin(Scanner scanner) {
@@ -73,7 +70,7 @@ public class UserController {
         System.out.println("Enter your password: ");
         String password = scanner.next();
 
-        for (User user : users) {
+        for (User user : users.values()) {
             if (user.getUsername().equalsIgnoreCase(username) && user.getPassword().equals(password) && user.getRoleId() == 2) {
                 return true;  
             }
@@ -82,8 +79,12 @@ public class UserController {
         return false; 
     }
 
+    public void profilePage(){
+        
+    }
+
     public boolean isRegistered(String username){
-        for(User user: users){
+        for(User user: users.values()){
             if (user.getUsername().equals(username)) {
                 return true;
             }
@@ -123,7 +124,7 @@ public class UserController {
                     String password = data[7];
                     
                     User user = new User(userId, roleId, name, address, phoneNumber, username, email, password);
-                    users.add(user); // Add the user to the list
+                    users.put(userId, user); // Add the user to the list
                 }
             }
 
@@ -136,7 +137,7 @@ public class UserController {
 
     private void saveUsers(){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(userDataFile))){
-            for(User user : users){
+            for(User user : users.values()){
                 writer.write(user.getUserId() + "," + user.getRoleId() + "," + user.getName() + ","+ user.getAddress() + "," + user.getPhoneNumber() + ","+ user.getUsername() + "," + user.getEmail() + "," + user.getPassword());
                 writer.newLine();
             }

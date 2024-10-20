@@ -3,98 +3,119 @@ import java.util.*;
 import java.io.*;
 
 import model.Post;
+import controller.UserController;
 
 public class PostController {
 
     Scanner scanner = new Scanner(System.in);
-    private List<Post> posts;
+    UserController userController = new UserController();
+    private HashMap<Integer, Post> posts;
     private final String postDataFile = "data\\PostData.txt";
 
     public PostController() {
-        posts = new ArrayList<>();
+        posts = new HashMap<>();
         loadPosts();
     }
 
-    public void handleClient() {
-        System.out.println("Choose an option: ");
-        int choice = scanner.nextInt();
+    public void handleClient(int userId) {
+        try{
+            System.out.println("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
 
-        switch (choice) {
-            case 1:
-                createPost();
-                break;
+            switch (choice) {
+                case 1:
+                    createPost(userId);
+                    break;
 
-            case 2:
-                viewPost();
-                break;
+                case 2:
+                    viewPost();
+                    break;
 
-            case 3:
-                updatePost();
-                break;
+                case 3:
+                    updatePost();
+                    break;
 
-            case 4:
-                deletePost();
-                break;
+                case 4:
+                    deletePost();
+                    break;
 
-            case 5:
-                searchPost();
-                break;
-        
-            default:
-                break;
+                case 5:
+                    userController.profilePage();
+                    break;
+            
+                default:
+                    System.out.println("Please enter a valid option");
+                    handleClient(userId);
+            }
+        }catch(InputMismatchException e){
+            System.out.println("Please enter a valid number");
+            scanner.nextLine();
+            handleClient(userId); 
         }
+        
     }
     
-    public void createPost() {
-        System.out.println("Creating a new post...");
 
-        System.out.print("Enter post title: ");
-        String title = scanner.next();
+    public void createPost(int userId) {
+        try {
+            System.out.println("Creating a new post...");
 
-        System.out.print("Enter post type: (Apartment, House, Warehouse, or )thers)");
-        String type = scanner.next();
+            int postId = posts.size() + 1;
 
-        System.out.print("Enter post listing type: (Rent or Buy)");
-        String listingType = scanner.next();
+            System.out.print("Enter post title: ");
+            String title = scanner.nextLine();
 
-        System.out.print("Enter post description: ");
-        String description = scanner.next();
+            System.out.print("Enter post type (Apartment, House, Warehouse, or Others): ");
+            String type = scanner.nextLine();
 
-        System.out.print("Enter post price: ");
-        double price = scanner.nextDouble();
-        scanner.nextLine(); // Consume the newline
+            System.out.print("Enter post listing type (Rent or Buy): ");
+            String listingType = scanner.nextLine();
 
-        System.out.print("Enter property area size (in square meters): ");
-        double area = scanner.nextDouble();
-        scanner.nextLine(); // Consume the newline
+            System.out.print("Enter post description: ");
+            String description = scanner.nextLine();
 
-        System.out.print("Enter number of bedrooms: ");
-        int bedrooms = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline
+            System.out.print("Enter post price: ");
+            double price = scanner.nextDouble();
+            scanner.nextLine(); // Consume the newline
 
-        System.out.print("Enter number of bathrooms: ");
-        int bathrooms = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline
+            System.out.print("Enter property area size (in square meters): ");
+            double area = scanner.nextDouble();
+            scanner.nextLine(); // Consume the newline
 
-        System.out.print("Enter contact information: ");
-        String contactInfo = scanner.next();
+            System.out.print("Enter number of bedrooms: ");
+            int bedrooms = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline
 
-        System.out.print("Enter post country: ");
-        String country = scanner.next();
+            System.out.print("Enter number of bathrooms: ");
+            int bathrooms = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline
 
-        System.out.print("Enter post city: ");
-        String city = scanner.next();
+            System.out.print("Enter contact information: ");
+            String contactInfo = scanner.nextLine();
 
-        System.out.print("Enter post address: ");
-        String address = scanner.next();
+            System.out.print("Enter post country: ");
+            String country = scanner.nextLine();
 
-        Post newPost = new Post(1, 1, listingType, type, title, description, country, city, address, price, bedrooms, bathrooms, area, "Available", contactInfo);
+            System.out.print("Enter post city: ");
+            String city = scanner.nextLine();
 
-        posts.add(newPost);
-        savePost();
-        
-        System.out.println("Post created successfully! Title: " + newPost.getTitle());
+            System.out.print("Enter post address: ");
+            String address = scanner.nextLine();
 
+            Post newPost = new Post(postId, userId, listingType, type, title, description, country, city, address, price, bedrooms, bathrooms, area, "Available", contactInfo);
+
+            posts.put(postId, newPost);
+            savePost();
+            
+            System.out.println("Post created successfully! Title: " + newPost.getTitle());
+
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter valid data for each field.");
+            scanner.nextLine();  // Clear the invalid input
+        } catch (Exception e) {
+            System.out.println("An error occurred while creating the post: " + e.getMessage());
+        }
     }
      
     public void viewPost() {
@@ -109,9 +130,7 @@ public class PostController {
         System.out.println("Not implemented");
     }
 
-    public void searchPost() {
-        System.out.println("Not implemented");
-    }
+
 
     private void loadPosts() {
         File file = new File(postDataFile);
@@ -139,7 +158,7 @@ public class PostController {
                     String contactInfo = data[13];
 
                     Post post = new Post(postId, userId, listingType, type, title, description, country, city, address, price, bedrooms, bathrooms, area, "Available", contactInfo);
-                    posts.add(post);  // Add the post to the list
+                    posts.put(postId, post);  // Add the post to the list
                 }
             }
         } catch (IOException e) {
@@ -151,7 +170,7 @@ public class PostController {
 
     private void savePost() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(postDataFile))) {
-            for (Post post : posts) {
+            for (Post post : posts.values()) {
                 writer.write(post.getPostId() + "," + post.getUserId() + "," + post.getListingType() + "," + post.getType() + "," + post.getTitle() + "," + post.getDescription() + "," + post.getCountry() + "," + post.getCity() + "," + post.getAddress() + "," + post.getPrice() + "," + post.getBedrooms() + "," + post.getBathrooms() + "," + post.getArea() + "," + post.getStatus() + "," + post.getOwnerContactInfo());
                 writer.newLine();
             }
