@@ -11,7 +11,6 @@ public class AdminController {
         while (isAdminActive) {
             try {
                 AdminView.showAdminMenu();
-                
                 System.out.println("Choose an option: ");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
@@ -26,7 +25,7 @@ public class AdminController {
                         break;
     
                     case 3:  
-                        System.out.println("Logging out.");
+                        System.out.println("\nLogging out.");
                         isAdminActive = false;
                         break;
                     

@@ -28,23 +28,23 @@ public class Main {
                     case 2:
                     int userId = handleLogin(scanner, userController);
                 
-                    if (userId > 0) {  
-                        System.out.println("Logged in as a client successfully.");
-                        postController.handleClient(userId); 
+                        if (userId > 0) {  
+                            System.out.println("Logged in as a client successfully.");
+                            postController.handleClient(userId); 
 
-                    } else if (userId == -2) {
-                        System.out.println("Logged in as an admin successfully.");
-                        adminController.handleAdmin(userId); 
-                          
-                    } else {
-                        System.out.println("Login failed. Try again.");
-                    }
-                    break;
+                        } else if (userId == -2) {
+                            System.out.println("Logged in as an admin successfully.");
+                            adminController.handleAdmin(userId); 
+                            
+                        } else {
+                            System.out.println("Login failed. Try again.");
+                        }
+                        break;
 
                 case 3:
-                    System.out.println("Exiting application. Thank you!");
+                    System.out.println("\nExiting application. Thank you!");
                     scanner.close();
-                    return;  // Exit the application
+                    return; 
             }
         }
     }  

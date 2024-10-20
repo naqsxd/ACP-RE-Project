@@ -48,8 +48,8 @@ public class PostController {
                         userController.profilePage();
                         break;
     
-                    case 0:  // Exit client session
-                        System.out.println("Logging out.");
+                    case 6: 
+                        System.out.println("\nLogging out.");
                         isClientActive = false;
                         break;
                     
@@ -66,7 +66,7 @@ public class PostController {
 
     public void createPost(int userId) {
         try {
-            System.out.println("Creating a new post...");
+            System.out.println("\nCreating a new post...");
 
             int postId = posts.size() + 1;
 
@@ -144,7 +144,7 @@ public class PostController {
                 String listingType = postDetails[2];
 
                 
-                System.out.println(String.format("%s. %s - %s, %s, %s - %s - %s", postId, title, address, city, country, price, listingType));
+                System.out.println(String.format("\n %s. %s - %s, %s, %s - %s - %s", postId, title, address, city, country, price, listingType));
                 
             }
         } catch (IOException e) {
@@ -157,7 +157,7 @@ public class PostController {
         viewPost();  // Display existing posts to the user
     
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the ID of the post you want to update: ");
+        System.out.print("\n Enter the ID of the post you want to update: ");
         int postId = scanner.nextInt();
         scanner.nextLine();  // Consume the newline character
     
@@ -268,7 +268,7 @@ public class PostController {
         viewPost();
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the ID of the post you want to delete: ");
+        System.out.print("\n Enter the ID of the post you want to delete: ");
         int postId = scanner.nextInt();
 
         if (posts.containsKey(postId)) {
