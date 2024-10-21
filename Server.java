@@ -1,54 +1,85 @@
-import java.util.*;
+import java.io.*;
+import java.net.*;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
 import controller.*;
 
 
-public class Main {
-    public static void main(String[] args) {
-        System.out.println("Welcome to Real Estate Application!");
+public class Server{
+    
 
-        Scanner scanner = new Scanner(System.in);
+    public static void main(String[] args) {
         UserController userController = new UserController();
         PostController postController = new PostController();
         AdminController adminController = new AdminController();
+        Scanner scanner = new Scanner(System.in);
 
-        int isLoggedIn = -1;
-    
-        while (isLoggedIn==-1) {
-            System.out.println("Enter a number:");
-            System.out.println("1. Register");
-            System.out.println("2. Login");
-            System.out.println("3. Exit the Application");
-            int choice = getValidInput(scanner, new int[]{1, 2, 3});
-            
-            switch (choice) {
-                case 1:
-                    userController.registerUser(scanner);
-                    break;
+        try (ServerSocket serverSocket = new ServerSocket(1234)) {
+            System.out.println("Server is waiting for a client connection...");
 
-                    case 2:
-                    int userId = handleLogin(scanner, userController);
+            Socket clientSocket = serverSocket.accept();
+            System.out.println("Client connected!");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); // read from client
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); // write to client
+
+            String clientMessage;
+            boolean isLoggedIn = false;
+
+            while (!isLoggedIn) {
+                out.println("1. Register");
+                out.println("2. Login");
+                out.println("3. Exit");
+                out.println("Choose an option:");
                 
-                        if (userId > 0) {  
-                            System.out.println("Logged in as a client successfully.");
-                            postController.handleClient(userId); 
+                // Read the client's choice
+                clientMessage = in.readLine();
 
-                        } else if (userId == -2) {
-                            System.out.println("Logged in as an admin successfully.");
-                            adminController.handleAdmin(userId); 
-                            
-                        } else {
-                            System.out.println("Login failed. Try again.");
-                        }
-                        break;
+                // Process the client's choice
+                if ("1".equals(clientMessage)) {
+                    out.println("Registration process initiated.");
+                    userController.registerUser(scanner);
 
-                case 3:
-                    System.out.println("\nExiting application. Thank you!");
-                    scanner.close();
-                    return; 
+                } else if ("2".equals(clientMessage)) {
+                    out.println("Login process initiated.");
+                    int userId = handleLogin(scanner, userController);
+
+                    if (userId > 0) {
+                        out.println("Logged in as a client successfully.");
+                        postController.handleClient(userId);
+                        isLoggedIn = true;
+                    }else if (userId == -2) {
+                        System.out.println("Logged in as an admin successfully.");
+                        adminController.handleAdmin(userId); 
+                        
+                    } else {
+                        System.out.println("Login failed. Try again.");
+                    }
+
+
+                } else if ("3".equals(clientMessage)) {
+                    out.println("Exiting...");
+                    break;
+                } else {
+                    out.println("Invalid option. Please choose again.");
+                }
             }
+
+
+
+            
+            in.close();
+            out.close();
+            clientSocket.close();
+            System.out.println("Client disconnected.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }  
-    
+    }
+
+
+
     public static int handleLogin(Scanner scanner, UserController userController) {
         System.out.println("Login as:");
         System.out.println("1. Client");
