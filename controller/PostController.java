@@ -67,56 +67,41 @@ public class PostController {
     public void createPost(int userId) {
         try {
             System.out.println("\nCreating a new post...");
-
+    
             int postId = posts.size() + 1;
+    
+            // Validate mandatory fields
+            String title = validateInput(scanner, "Enter post title:", "^(?!\\s).+$", "Title cannot be empty.");
 
-            System.out.print("Enter post title: ");
-            String title = scanner.nextLine();
-
-            System.out.print("Enter post type (Apartment, House, Warehouse, or Others): ");
-            String type = scanner.nextLine();
-
-            System.out.print("Enter post listing type (Rent or Buy): ");
-            String listingType = scanner.nextLine();
-
-            System.out.print("Enter post description: ");
-            String description = scanner.nextLine();
-
-            System.out.print("Enter post price: ");
-            double price = scanner.nextDouble();
-            scanner.nextLine(); // Consume the newline
-
-            System.out.print("Enter property area size (in square meters): ");
-            double area = scanner.nextDouble();
-            scanner.nextLine(); // Consume the newline
-
-            System.out.print("Enter number of bedrooms: ");
-            int bedrooms = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline
-
-            System.out.print("Enter number of bathrooms: ");
-            int bathrooms = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline
-
-            System.out.print("Enter contact information: ");
-            String contactInfo = scanner.nextLine();
-
-            System.out.print("Enter post country: ");
-            String country = scanner.nextLine();
-
-            System.out.print("Enter post city: ");
-            String city = scanner.nextLine();
-
-            System.out.print("Enter post address: ");
-            String address = scanner.nextLine();
-
+            String type = validateInput(scanner, "Enter post type (Apartment, House, Warehouse, or Others):", "^(Apartment|House|Warehouse|Others)$", "Invalid type. Please enter Apartment, House, Warehouse, or Others.");
+            
+            String listingType = validateInput(scanner, "Enter post listing type (Rent or Buy):", "^(Rent|Buy)$", "Invalid listing type. Please enter Rent or Buy.");
+            
+            double area = Double.parseDouble(validateInput(scanner, "Enter property area size (in square meters):","^[1-9]\\d*(\\.\\d+)?$", "Invalid area size. Please enter a positive number."));
+            
+            String contactInfo = validateInput(scanner, "Enter contact information:", "^(?!\\s).+$", "Contact information cannot be empty.");
+            
+            String country = validateInput(scanner, "Enter post country:", "^(?!\\s).+$", "Country cannot be empty.");
+            
+            String city = validateInput(scanner, "Enter post city:", "^(?!\\s).+$", "City cannot be empty.");
+            
+            String address = validateInput(scanner, "Enter post address:", "^(?!\\s).+$", "Address cannot be empty.");
+    
+            String description = validateInput(scanner, "Enter post description (optional):", "^(?!\\s).*$", "Description cannot be empty if provided.");
+            
+            double price = Double.parseDouble(validateInput(scanner, "Enter post price: ", "^[1-9]\\d*(\\.\\d+)?$", "Invalid price. Please enter a positive number."));
+            
+            int bedrooms = Integer.parseInt(validateInput(scanner, "Enter number of bedrooms: ", "^[0-9]+$", "Invalid number of bedrooms. Please enter a positive number."));
+            
+            int bathrooms = Integer.parseInt(validateInput(scanner, "Enter number of bathrooms: ", "^[0-9]+$", "Invalid number of bathrooms. Please enter a positive number."));
+    
             Post newPost = new Post(postId, userId, listingType, type, title, description, country, city, address, price, bedrooms, bathrooms, area, "Available", contactInfo);
-
+    
             posts.put(postId, newPost);
             savePost();
-            
+    
             System.out.println("Post created successfully! Title: " + newPost.getTitle());
-
+    
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter valid data for each field.");
             scanner.nextLine();  // Clear the invalid input
@@ -127,7 +112,11 @@ public class PostController {
      
 
     public void viewPost() {
-        
+        if (posts.isEmpty()) {
+            System.out.println("There are no posts.");
+            return; 
+        }
+
         try (BufferedReader br = new BufferedReader(new FileReader(postDataFile))) {
             String line;
             
@@ -142,9 +131,10 @@ public class PostController {
                 String address = postDetails[8];  
                 String price = postDetails[9];
                 String listingType = postDetails[2];
+                String status = postDetails[13];
 
                 
-                System.out.println(String.format("\n %s. %s - %s, %s, %s - %s - %s", postId, title, address, city, country, price, listingType));
+                System.out.println(String.format("\n %s. %s | %s, %s, %s | $%s | %s | %s", postId, title, address, city, country, price, listingType, status));
                 
             }
         } catch (IOException e) {
@@ -154,6 +144,11 @@ public class PostController {
 
 
     public void updatePost() {
+        if (posts.isEmpty()) {
+            System.out.println("There are no posts.");
+            return; 
+        }
+
         viewPost();  // Display existing posts to the user
     
         Scanner scanner = new Scanner(System.in);
@@ -263,8 +258,12 @@ public class PostController {
     }
     
 
-
     public void deletePost() {
+        if (posts.isEmpty()) {
+            System.out.println("There are no posts.");
+            return; 
+        }
+
         viewPost();
 
         Scanner scanner = new Scanner(System.in);
@@ -327,5 +326,22 @@ public class PostController {
         } catch (IOException e) {
             System.err.println("Error saving post data: " + e.getMessage());
         }
+    }
+
+    public String validateInput(Scanner scanner, String prompt, String regex, String errorMessage) {
+        String input;
+    
+        while (true) {
+            System.out.println(prompt);
+            input = scanner.nextLine();
+    
+            if (input.matches(regex)) {
+                break; // Valid
+            } else {
+                System.out.println(errorMessage);
+            }
+        }
+    
+        return input;
     }
 }

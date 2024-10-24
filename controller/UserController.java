@@ -22,37 +22,33 @@ public class UserController {
 
         int userId = users.size() + 1;
 
-        System.out.println("Enter your name:");
-        String name = scanner.nextLine();
+        
+        String name = validateInput(scanner, "Enter your name:", "[a-zA-Z]+([ ][a-zA-Z]+)*", "Invalid name. Please enter a valid name.");
         
         String username = uniqueUsernameChecker(scanner);
         
-        System.out.println("Enter your email:");
-        String email = scanner.nextLine();
+        String email = validateInput(scanner, "Enter your email:", "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$", "Invalid email. Please enter a valid email.");
     
-        System.out.println("Enter your password:");
-        String password = scanner.nextLine();
+        String password = validateInput(scanner, "Enter your password:", "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", "Invalid password. Minimum eight characters, at least one letter and one number");
 
-        System.out.println("Enter your phone number:");
-        String phoneNo = scanner.nextLine();
+        String phoneNo = validateInput(scanner, "Enter your phone number (format: 000-000-0000):", "^\\d{3}-?\\d{3}-?\\d{4}$", "Invalid phone number format. Please use the format 000-000-0000.");
 
-        System.out.println("Enter your address:");
-        String address = scanner.nextLine();
+        String address = validateInput(scanner, "Enter your address:", "^.*$", "Invalid address. Please enter a valid address.");
 
 
         User newUser = new User(userId, 1, name, address, phoneNo, username, email, password);
         users.put(userId, newUser);
         saveUsers();
 
-        System.out.println("Registration successful! Welcome, " + newUser.getName() + "!");
+        System.out.println("Registered '" + newUser.getName() + "' successfully. Please login.");
     }
 
     public int loginClient(Scanner scanner) {
         System.out.println("Enter your username: ");
-        String username = scanner.next();
+        String username = scanner.nextLine();
 
         System.out.println("Enter your password: ");
-        String password = scanner.next();
+        String password = scanner.nextLine();
 
         for (User user : users.values()) {
             if (user.getUsername().equalsIgnoreCase(username) && user.getPassword().equals(password) && user.getRoleId()==1) {
@@ -93,8 +89,7 @@ public class UserController {
     }
 
     private String uniqueUsernameChecker(Scanner scanner){
-        System.out.println("Enter your username:");
-        String username = scanner.nextLine();
+        String username = validateInput(scanner, "Enter your username:", "^[a-zA-Z][a-zA-Z0-9_]{2,14}$", "Invalid username. It should start with a letter, be between 3 and 15 characters long, and contain only letters, digits, or underscores.");
 
         if (isRegistered(username)) {
             System.out.println("Username already taken. Please choose another one.");
@@ -145,4 +140,22 @@ public class UserController {
             System.err.println("Error saving user data: " + e.getMessage());
         }
     }
+
+    public String validateInput(Scanner scanner, String prompt, String regex, String errorMessage) {
+        String input;
+    
+        while (true) {
+            System.out.println(prompt);
+            input = scanner.nextLine();
+    
+            if (input.matches(regex)) {
+                break; // Valid
+            } else {
+                System.out.println(errorMessage);
+            }
+        }
+    
+        return input;
+    }
+    
 }
