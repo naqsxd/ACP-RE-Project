@@ -8,6 +8,7 @@ public class PostController {
 
     Scanner scanner = new Scanner(System.in);
     UserController userController = new UserController();
+    
     private HashMap<Integer, Post> posts;
     private final String postDataFile = "data\\PostData.txt";
 
@@ -19,6 +20,7 @@ public class PostController {
 
 
     public void handleClient(int userId) {
+        ProfileController profileController = new ProfileController(userId);
         boolean isClientActive = true;
         while (isClientActive) {
             try {
@@ -26,7 +28,7 @@ public class PostController {
                 System.out.println("Choose an option: ");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
-    
+                
                 switch (choice) {
                     case 1:
                         createPost(userId);
@@ -45,7 +47,7 @@ public class PostController {
                         break;
     
                     case 5:
-                        userController.profilePage();
+                        profileController.handleProfile();
                         break;
     
                     case 6: 

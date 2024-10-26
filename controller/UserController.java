@@ -1,7 +1,3 @@
-// THINGS TO PUT TO CONSIDERATION:
-// 1. Add validations to user input using regex.
-// 2. Give more feedback to user, if an error occurs.
-
 package controller;
 import model.User;
 import java.util.HashMap;
