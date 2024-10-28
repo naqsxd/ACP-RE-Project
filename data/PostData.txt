@@ -1,0 +1,2 @@
+1,1,Rent,Apartment,Nice Building,,Iraq,Erbil,ABCXYZ,19000.0,2,2,90.0,Available,Available
+2,1,Rent,Apartment,Bad Building,,Iraq,Erbil,ABCXYZ,20000.0,2,2,90.0,Available,Available

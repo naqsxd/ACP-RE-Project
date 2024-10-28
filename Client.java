@@ -1,39 +1,39 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+import controller.AdminController;
+import controller.PostController;
+import controller.UserController;
+
+import java.io.*;
+import java.net.*;
 import java.util.Scanner;
 
 public class Client {
     public static void main(String[] args) {
+        UserController userController = new UserController();
+        PostController postController = new PostController();
+        AdminController adminController = new AdminController();
+        System.out.println("Welcome to Real Estate Application!");
 
-        try (Socket socket = new Socket("localhost", 1234)) { 
-            System.out.println("Connected to the server!");
+        try (Socket socket = new Socket("localhost", 9999);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             Scanner scanner = new Scanner(System.in)) {
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            Scanner scanner = new Scanner(System.in);
-            String serverMessage;
+            // Step 1: Receive the initial message from the server
+            System.out.println("Server: " + in.readLine());
+            System.out.println("Server: " + in.readLine());
+            System.out.println("Server: " + in.readLine());
+            System.out.println("Server: " + in.readLine());
 
-            while (true) {
-                serverMessage = in.readLine();
-                System.out.println(serverMessage);  
- 
-                if (serverMessage.contains("Choose an option:")) {
-                    String choice = scanner.nextLine();
-                    out.println(choice);
-                }
+            // Step 2: Send the client's choice
+            System.out.print("Your choice: ");
+            String choice = scanner.nextLine();
+            out.println(choice);
 
-                if (serverMessage.equals("Exiting...")) {
-                    break;  // Exit the loop if server indicates to exit
-                }
-            }
 
-            // Close connections
-            in.close();
-            out.close();
-            scanner.close();
+            // Step 3: Receive additional option from server
+            System.out.println("Server: " + in.readLine());
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }

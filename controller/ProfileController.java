@@ -2,11 +2,14 @@ package controller;
 
 import java.io.*;
 import java.util.*;
-import view.ProfileView;;
+import view.ProfileView;
+
+
 public class ProfileController {
     
     private int loggedInUserId;
     private final String userDataFile = "data\\UserData.txt"; 
+    private final String postDataFile = "data\\PostData.txt";
     Scanner scanner = new Scanner(System.in);
    
     public ProfileController(int loggedInUserId) {
@@ -49,8 +52,7 @@ public class ProfileController {
             }
         }
         }
-        
-    
+
     public void viewProfile() {
 
         if (loggedInUserId == -1) { 
@@ -91,20 +93,56 @@ public class ProfileController {
     
     public void updateProfile() {
         System.out.println("NOT IMPLEMENTED");
+
+
+
     }
-    
+
     public void deleteProfile() {
         System.out.println("NOT IMPLEMENTED");
 
     }
 
     public void ViewCreatedPosts() {
-        System.out.println("NOT IMPLEMENTED");
+        if (loggedInUserId == -1) { 
+            System.out.println("No user is currently logged in.");
+            return;
+        }
+    
+        boolean postsFound = false;
+    
+        try (BufferedReader br = new BufferedReader(new FileReader(postDataFile))) {
+            String line;
+    
+            System.out.println("\nYour Created Posts:");
+            while ((line = br.readLine()) != null) {
+                String[] postData = line.split(",");
+                int postUserId = Integer.parseInt(postData[1]);
+    
+                if (postUserId == loggedInUserId) {
+                    postsFound = true;
 
-    }
-
-    public void ViewBookmarks() {
-        System.out.println("NOT IMPLEMENTED");
+                    System.out.println("Post ID: " + postData[0]);
+                    System.out.println("Title: " + postData[4]);
+                    System.out.println("Type: " + postData[3]);
+                    System.out.println("Listing Type: " + postData[2]);
+                    System.out.println("Address: " + postData[8]);
+                    System.out.println("Location: " + postData[6] + ", " + postData[7]);
+                    System.out.println("Price: " + postData[9]);
+                    System.out.println("Bedrooms: " + postData[10]);
+                    System.out.println("Bathrooms: " + postData[11]);
+                    System.out.println("Contact for the post: " + postData[14]);
+                    System.out.println("---------------------------------");
+                }
+            }
+    
+            if (!postsFound) {
+                System.out.println("You have not created any posts yet.");
+            }
+    
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the post data file: " + e.getMessage());
+        }
 
     }
 
@@ -112,6 +150,5 @@ public class ProfileController {
         System.out.println("NOT IMPLEMENTED");
 
     }
-
 
 }
